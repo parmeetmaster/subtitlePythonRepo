@@ -93,8 +93,6 @@ class StreamData:
     qlabel: Dict[str, str]
     file: str
     cdn_img: str
-    length: int
-    id: int
     subs: List[Sub]
     title: str
 
@@ -108,11 +106,9 @@ class StreamData:
         qlabel = from_dict(from_str, obj.get("qlabel"))
         file = from_str(obj.get("file"))
         cdn_img = from_str(obj.get("cdn_img"))
-        length = from_int(obj.get("length"))
-        id = from_int(obj.get("id"))
         subs = from_list(Sub.from_dict, obj.get("subs"))
         title = from_str(obj.get("title"))
-        return StreamData(logo, hash, backup, country, qlabel, file, cdn_img, length, id, subs, title)
+        return StreamData(logo, hash, backup, country, qlabel, file, cdn_img, subs, title)
 
     def to_dict(self) -> dict:
         result: dict = {}

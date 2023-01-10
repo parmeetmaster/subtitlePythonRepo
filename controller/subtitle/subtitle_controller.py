@@ -36,7 +36,7 @@ class SubtitleController:
             dir_path=str(desktop)+"-"+title+"-"+sbModel.label+".vtt"
 
             ff = open(dir_path, mode='wb')
-            ff.write(r.content)
+            ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill.com")))
             ff.seek(0)
             ff.flush()
             ff.close()
