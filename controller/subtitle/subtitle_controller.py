@@ -33,7 +33,7 @@ class SubtitleController:
         try:
             desktop = pathlib.Path.home() / 'Desktop' / title/"sat"/''
             self._createOrDetectDirectoryExist(str(desktop))
-            dir_path=str(desktop)+"-"+title+"-"+sbModel.label+".vtt"
+            dir_path=str(desktop)+"-"+title+"-"+sbModel.label+"-"+self.getNameConvention(sbModel.label)+".vtt"
 
             ff = open(dir_path, mode='wb')
             ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill.com")))
@@ -42,7 +42,9 @@ class SubtitleController:
             ff.close()
             convert_file = ConvertFile(dir_path, encoding_format='utf-8')
             convert_file.convert()
-            os.unlink(dir_path)
+
+
+            #os.unlink(dir_path)
             # print(data)
         finally:
             print("finaly")
@@ -54,3 +56,44 @@ class SubtitleController:
             # Create a new directory because it does not exist
             os.makedirs(path)
             print("The new directory is created!")
+
+    def getNameConvention(self, label:str):
+        if str.lower(label)=="arabic":
+            return ".ar_AR"
+        elif str.lower(label)=="thai":
+            return ".th_TH"
+        elif str.lower(label)=="hindi":
+            return ".hi_IN"
+        elif str.lower(label)=="english":
+            return ".en_US"
+        elif str.lower(label) == "indonesian":
+            return ".id_ID"
+        elif str.lower(label) == "french":
+            return ".fr_FR"
+        elif str.lower(label) == "khmer":
+            return ".km_KH"
+        elif str.lower(label) == "malay":
+            return ".ms_MY"
+        elif str.lower(label) == "portuguese":
+            return ".pt_PT"
+        elif str.lower(label) == "polish":
+            return ".pl_PL"
+        elif str.lower(label) == "italian":
+            return ".it_IT"
+        elif str.lower(label) == "persian":
+            return ".fa_IR"
+        elif str.lower(label) == "vietnamese":
+            return ".vi_VN"
+        elif str.lower(label) == "turkish":
+            return ".tr_TR"
+        elif str.lower(label) == "persian":
+            return ".fa_IR"
+        elif str.lower(label) == "russian":
+            return ".ru_RU"
+        elif str.lower(label) == "spanish":
+            return ".es_MX"
+        elif str.lower(label) == "german":
+            return ".de_DE"
+        else:
+            return ""
+
