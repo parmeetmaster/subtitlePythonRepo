@@ -29,21 +29,32 @@ class SubtitleController:
 
     def _createSrtFiles(self, sbModel: Sub,title:str):
         r = requests.get(sbModel.file)
-        print(r.text)
+        #print(r.text)
         try:
             desktop = pathlib.Path.home() / 'Desktop' / title/"sat"/''
             self._createOrDetectDirectoryExist(str(desktop))
             dir_path=str(desktop)+"-"+title+"-"+sbModel.label+"-"+self.getNameConvention(sbModel.label)+".vtt"
 
             ff = open(dir_path, mode='wb')
+            r.content.replace(b"\n", b"", 1)
             ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill.com")))
             ff.seek(0)
             ff.flush()
             ff.close()
             convert_file = ConvertFile(dir_path, encoding_format='utf-8')
-            convert_file.convert()
+            dd=convert_file.convert()
+            dir_path2 = str(desktop) + "-" + title + "-" + sbModel.label + "-" + self.getNameConvention(
+                sbModel.label) + ".srt"
+            with open(dir_path2, "r+",encoding="utf-8") as f:
+                old = f.read()
+                print(old)
+                # read everything in the file
+                f.seek(0)  # rewind
+                f.write(old.replace("\n", "" , 1))# write the new line before
+                f.close()
 
 
+            #convert_file.convert()
             #os.unlink(dir_path)
             # print(data)
         finally:
