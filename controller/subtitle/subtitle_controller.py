@@ -1,4 +1,8 @@
 import json
+import urllib
+from urllib.parse import urlparse
+import urllib.request as req
+
 import requests
 import re
 from flet import Page
@@ -6,6 +10,7 @@ import os
 import pathlib
 
 from controller.subtitle.vtt_to_srt import ConvertFile
+from models.donghua_guo_man.donghuaman_model import DongManModel, dong_man_model_from_dict
 from models.stream_sb_model.stream_sb_model import stream_sb_model_from_dict, StreamSbModel, Sub
 
 
@@ -34,7 +39,7 @@ class SubtitleController:
 
             ff = open(dir_path, mode='wb')
             r.content.replace(b"\n", b"", 1)
-            ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill.com")))
+            ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill.com")).replace(b"donghuaguoman.com",bytes(b"Animekill.com")))
             ff.seek(0)
             ff.flush()
             ff.close()
@@ -105,8 +110,30 @@ class SubtitleController:
         else:
             return ""
 
+    ### donghuaguoman
+    def replaceSpaces(input:str)->str:
+        rep = "%20"
+        for i in range(len(input)):
+            if (input[i] == ' '):
+                input = input.replace(input[i], rep)
 
-### donghuaguoman
+        return input
+    def generateSubtileFromDonghuaManJson(self, e):
+        #print(self.json_str)
+        dongModel: DongManModel = dong_man_model_from_dict(json.loads(self.json_str))
+        #print(len(dongModel.tracks))
+        #complete_url_data=urlparse("https:\/\/www.donghuaplay.com\/subtitle.vtt?url=https%3A%2F%2Fdonghuaplay.com%2Fuploads%2Fsubtitles%2Ftales%20278_English_Persian-vnU-HlsqOr8dJgK.vtt")
+        #print(urllib.parse.unquote(complete_url_data.query))
+        for val in dongModel.tracks:
+            complete_url_data = urlparse(val.file)
+            decode_url=urllib.parse.unquote(complete_url_data.query)
+            final_url:str=str(decode_url).replace("url=","")
+            self._createSrtFiles(Sub(file=final_url,label=val.label),dongModel.title)
+
+
+
+
+
 
 
 
