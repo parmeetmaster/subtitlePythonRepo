@@ -32,8 +32,8 @@ class SubtitleConverterScreen:
 
         lv = flet.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
         lv.controls.append(TextField(on_change=self.controller.setText))
-        lv.controls.append(ElevatedButton(text="Submit", on_click=self.controller.generateSubtileFromJson))
-        lv.controls.append(ElevatedButton(text="Submit", on_click=self.controller.generateSubtileFromJson))
+        lv.controls.append(ElevatedButton(text="Submit", on_click=self.controller.generateSubtileFromStreamSbJson))
+        lv.controls.append(ElevatedButton(text="Submit", on_click=self.controller.generateSubtileFromStreamSbJson))
         lv.controls.append(flet.ElevatedButton(
             "Pick files",
             icon=flet.icons.UPLOAD_FILE,

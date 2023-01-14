@@ -16,16 +16,13 @@ class SubtitleController:
         self.json_str = text.control.value
         # print(self.json_str)
 
-    def generateSubtileFromJson(self, e):
+    def generateSubtileFromStreamSbJson(self, e):
         print(self.json_str)
         sbModel: StreamSbModel = stream_sb_model_from_dict(json.loads(self.json_str))
         print(len(sbModel.stream_data.subs))
 
         for val in sbModel.stream_data.subs:
             self._createSrtFiles(val,sbModel.stream_data.title)
-
-
-
 
     def _createSrtFiles(self, sbModel: Sub,title:str):
         r = requests.get(sbModel.file)
@@ -107,4 +104,10 @@ class SubtitleController:
             return ".de_DE"
         else:
             return ""
+
+
+### donghuaguoman
+
+
+
 
