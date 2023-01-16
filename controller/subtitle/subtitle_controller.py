@@ -31,6 +31,7 @@ class SubtitleController:
 
     def _createSrtFiles(self, sbModel: Sub,title:str):
         r = requests.get(sbModel.file)
+
         #print(r.text)
         try:
             desktop = pathlib.Path.home() / 'Desktop' / title/"sat"/''
