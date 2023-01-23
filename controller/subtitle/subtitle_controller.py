@@ -8,7 +8,7 @@ import re
 from flet import Page
 import os
 import pathlib
-
+import datetime
 from controller.subtitle.vtt_to_srt import ConvertFile
 from models.donghua_guo_man.donghuaman_model import DongManModel, dong_man_model_from_dict
 from models.stream_sb_model.stream_sb_model import stream_sb_model_from_dict, StreamSbModel, Sub
@@ -31,16 +31,18 @@ class SubtitleController:
 
     def _createSrtFiles(self, sbModel: Sub,title:str):
         r = requests.get(sbModel.file)
+        current_time = datetime.datetime.now()
+        folder_date_time_text:str = str(current_time.date().day)+"-"+str(current_time.date().month)+"-"+str(current_time.date().year)
 
         #print(r.text)
         try:
-            desktop = pathlib.Path.home() / 'Desktop' / title/"sat"/''
+            desktop = pathlib.Path.home() / 'Desktop'/folder_date_time_text / title/"sat"/''
             self._createOrDetectDirectoryExist(str(desktop))
             dir_path=str(desktop)+"-"+title+"-"+sbModel.label+"-"+self.getNameConvention(sbModel.label)+".vtt"
 
             ff = open(dir_path, mode='wb')
             r.content.replace(b"\n", b"", 1)
-            ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill.com")).replace(b"donghuaguoman.com",bytes(b"Animekill.com")))
+            ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill.com")).replace(b"donghuaguoman.com",bytes(b"Animekill.com")).replace(b"anichik.com",bytes(b"Animekill.com")))
             ff.seek(0)
             ff.flush()
             ff.close()
