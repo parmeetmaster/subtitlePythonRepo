@@ -40,9 +40,16 @@ class SubtitleController:
             self._createOrDetectDirectoryExist(str(desktop))
             dir_path=str(desktop)+"-"+title+"-"+sbModel.label+"-"+self.getNameConvention(sbModel.label)+".vtt"
 
+
+
+
             ff = open(dir_path, mode='wb')
             r.content.replace(b"\n", b"", 1)
-            ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill.com")).replace(b"donghuaguoman.com",bytes(b"Animekill.com")).replace(b"anichik.com",bytes(b"Animekill.com")))
+            ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"donghuastream.com",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"anichik.com",bytes(b"Animekill Mobile App At Google Playstore"))
+                     .replace(b"Donghuastream.com",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"https:",bytes(b"")))
+
+
+
             ff.seek(0)
             ff.flush()
             ff.close()
