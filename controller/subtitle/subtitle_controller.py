@@ -87,7 +87,7 @@ class SubtitleController:
             return ".id_ID"
         elif str.lower(label) == "french":
             return ".fr_FR"
-        elif str.lower(label) == "khmer":
+        elif (str.lower(label) == "khmer") or (str.lower(label) == "cambodian"):
             return ".km_KH"
         elif str.lower(label) == "malay":
             return ".ms_MY"
@@ -111,8 +111,6 @@ class SubtitleController:
             return ".es_MX"
         elif str.lower(label) == "german":
             return ".de_DE"
-        elif str.lower(label) == "cambodian":
-            return ".km_KH"
         elif str.lower(label) == "bengali":
             return ".bn_IN"
 
