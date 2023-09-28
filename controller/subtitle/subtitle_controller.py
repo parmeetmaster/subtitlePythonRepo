@@ -36,26 +36,20 @@ class SubtitleController:
 
         #print(r.text)
         try:
-            desktop = pathlib.Path.home() / 'Desktop'/folder_date_time_text / title/"sat"/''
+            new_title = re.sub(r"[^a-zA-Z0-9 ]", "", title)
+            desktop = pathlib.Path.home() / 'Desktop'/folder_date_time_text / new_title/"sat"/''
             self._createOrDetectDirectoryExist(str(desktop))
-            dir_path=str(desktop)+"-"+title+"-"+sbModel.label+"-"+self.getNameConvention(sbModel.label)+".vtt"
-
-
-
-
+            dir_path=str(desktop)+"-"+new_title+"-"+sbModel.label+"-"+self.getNameConvention(sbModel.label)+".vtt"
             ff = open(dir_path, mode='wb')
             r.content.replace(b"\n", b"", 1)
-            ff.write(r.content.replace(b"chineseanime.co.in",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"donghuastream.com",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"anichik.com",bytes(b"Animekill Mobile App At Google Playstore"))
+            ff.write(r.content.replace(b"chineseanime.org",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"donghuastream.com",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"anichik.com",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"www",bytes(b""))
                      .replace(b"Donghuastream.com",bytes(b"Animekill Mobile App At Google Playstore")).replace(b"https:",bytes(b"")))
-
-
-
             ff.seek(0)
             ff.flush()
             ff.close()
             convert_file = ConvertFile(dir_path, encoding_format='utf-8')
             dd=convert_file.convert()
-            dir_path2 = str(desktop) + "-" + title + "-" + sbModel.label + "-" + self.getNameConvention(
+            dir_path2 = str(desktop) + "-" + new_title + "-" + sbModel.label + "-" + self.getNameConvention(
                 sbModel.label) + ".srt"
             with open(dir_path2, "r+",encoding="utf-8") as f:
                 old = f.read()
@@ -117,6 +111,12 @@ class SubtitleController:
             return ".es_MX"
         elif str.lower(label) == "german":
             return ".de_DE"
+        elif str.lower(label) == "cambodian":
+            return ".km_KH"
+        elif str.lower(label) == "bengali":
+            return ".bn_IN"
+
+
         else:
             return ""
 
