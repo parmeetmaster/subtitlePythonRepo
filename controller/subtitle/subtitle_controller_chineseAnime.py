@@ -1,33 +1,25 @@
+import datetime
 import json
-import urllib
-from urllib.parse import unquote
-
-import requests
-import re
-from flet import Page
 import os
 import pathlib
-import datetime
-from controller.subtitle.vtt_to_srt import ConvertFile
-from models.donghua_guo_man.donghuaman_model import DongManModel, dong_man_model_from_dict
-from models.stream_sb_model.stream_sb_model import stream_sb_model_from_dict, StreamSbModel, Sub
+import re
+import urllib
 from urllib.parse import urlparse
 
+import requests
+from vtt_to_srt.vtt_to_srt import ConvertFile
 
-class SubtitleController:
-    json_str: str
+from models.dailymotion.dailymotion_model import DailymotionResponseModel, dailymotion_response_model_from_dict
+from models.stream_sb_model.stream_sb_model import Sub
+
+
+class SubtitleControllerChineseAnime:
+    input_url: str
+    languageArray = ["-es"]
 
     def setText(self, text):
-        self.json_str = text.control.value
+        self.input_url = text.control.value
         # print(self.json_str)
-
-    def generateSubtileFromStreamSbJson(self, e):
-        print(self.json_str)
-        sbModel: StreamSbModel = stream_sb_model_from_dict(json.loads(self.json_str))
-        print(len(sbModel.stream_data.subs))
-
-        for val in sbModel.stream_data.subs:
-            self._createSrtFiles(val, sbModel.stream_data.title)
 
     def _createSrtFiles(self, sbModel: Sub, title: str):
         r = requests.get(sbModel.file)
@@ -37,32 +29,27 @@ class SubtitleController:
 
         # print(r.text)
         try:
-            new_title = re.sub(r"[^a-zA-Z0-9 ]", "", title)
+            new_title = re.sub(r"[^a-zA-Z0-9 ]", "", title).replace(" ","_")
             desktop = pathlib.Path.home() / 'Desktop' / folder_date_time_text / new_title / "sat" / ''
             self._createOrDetectDirectoryExist(str(desktop))
             dir_path = str(desktop) + "-" + new_title + "-" + sbModel.label + "-" + self.getNameConvention(
                 sbModel.label) + ".vtt"
             ff = open(dir_path, mode='wb')
             r.content.replace(b"\n", b"", 1)
-
             ff.write(r.content.replace(b"Donghua Stream", bytes(b"Animekill Mobile App At Google Playstore")).replace(
                 b"donghuastream.com", bytes(b"Animekill Mobile App At Google Playstore")).replace(b"anichik.com", bytes(
                 b"Animekill Mobile App At Google Playstore")).replace(b"www", bytes(b""))
-                     .replace(b"Donghuastream.com", bytes(b"Animekill Mobile App At Google Playstore")).replace(
-                b"https:", bytes(b"")))
+            .replace(b"Donghuastream.com", bytes(b"Animekill Mobile App At Google Playstore")).replace(b"https:", bytes(b"")))
             ff.seek(0)
             ff.flush()
             ff.close()
-            convert_file = ConvertFile(dir_path, encoding_format='utf-8')
+            convert_file = ConvertFile(dir_path, "utf-8")
             dd = convert_file.convert()
             dir_path2 = str(desktop) + "-" + new_title + "-" + sbModel.label + "-" + self.getNameConvention(
                 sbModel.label) + ".srt"
-
-            self.remove_last_n_lines(dir_path2)
-
             with open(dir_path2, "r+", encoding="utf-8") as f:
                 old = f.read()
-                print(old)
+                print("old is here"+old)
                 # read everything in the file
                 f.seek(0)  # rewind
                 f.write(old.replace("\n", "", 1))  # write the new line before
@@ -75,21 +62,6 @@ class SubtitleController:
             print("finaly")
 
         # print(dd)
-
-    def remove_last_n_lines(self, filepath:str, n=5):
-        # Read the file content
-        with open(file=filepath, mode='r+',encoding="utf-8") as file:
-            lines = file.readlines()
-
-        # Remove the last n lines
-        updated_lines = lines[:-n]
-
-        # Write the updated content back to the file
-        with open(file=filepath, mode='w+',encoding='utf-8') as file:
-            file.writelines(updated_lines,)
-            file.seek(0)
-            file.flush()
-            file.close()
 
     def _createOrDetectDirectoryExist(self, path: str):
         isExist = os.path.exists(path)
@@ -137,29 +109,32 @@ class SubtitleController:
             return ".de_DE"
         elif str.lower(label) == "bengali":
             return ".bn_IN"
-        elif str.lower(label) == "burmese":
-            return ".my_MM"
+
 
         else:
             return ""
 
-    ### donghuaguoman
-    def replaceSpaces(input: str) -> str:
-        rep = "%20"
-        for i in range(len(input)):
-            if (input[i] == ' '):
-                input = input.replace(input[i], rep)
 
-        return input
+    def replace_language_code(self, url, new_code):
+        # Define the current language code to replace
+        current_code = "-en"
 
-    def generateSubtileFromDonghuaManJson(self, e):
+        # Create the regular expression pattern
+        pattern = re.compile(re.escape(current_code))
+
+        # Replace the current language code with the new one
+        updated_url = pattern.sub(new_code, url)
+        pattern = re.compile(r'(?<!https:)//')
+        updated_url = pattern.sub('/', updated_url)
+
+        return updated_url
+
+    def generateSubtileFromChineseAnime(self, e):
         # print(self.json_str)
-        dongModel: DongManModel = dong_man_model_from_dict(json.loads(self.json_str))
-        # print(len(dongModel.tracks))
-        # complete_url_data=urlparse("https:\/\/www.donghuaplay.com\/subtitle.vtt?url=https%3A%2F%2Fdonghuaplay.com%2Fuploads%2Fsubtitles%2Ftales%20278_English_Persian-vnU-HlsqOr8dJgK.vtt")
-        # print(urllib.parse.unquote(complete_url_data.query))
-        for val in dongModel.tracks:
-            complete_url_data = urlparse(val.file)
-            decode_url = urllib.parse.unquote(complete_url_data.query)
-            final_url: str = str(decode_url).replace("url=", "")
-            self._createSrtFiles(Sub(file=final_url, label=val.label), dongModel.title.replace(" ","_"))
+        print(self.input_url)
+        original_url = "https://httpcomfast.co.in//xapi/sub/lf/jNI/GB/a4vjo-en.vtt"
+        for curruntLanguage in self.languageArray:
+            updated_url = self.replace_language_code(original_url, curruntLanguage)
+            self._createSrtFiles(Sub(updated_url,"English"),"tos")
+
+        return 0

@@ -9,7 +9,6 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, TypeVar, Callable, Type, cast
 
-
 T = TypeVar("T")
 
 
@@ -28,7 +27,7 @@ def from_stringified_bool(x: str) -> bool:
 
 def from_dict(f: Callable[[Any], T], x: Any) -> Dict[str, T]:
     assert isinstance(x, dict)
-    return { k: f(v) for (k, v) in x.items() }
+    return {k: f(v) for (k, v) in x.items()}
 
 
 def from_int(x: Any) -> int:
@@ -69,18 +68,21 @@ class Logo:
 class Sub:
     file: str
     label: str
+    title: str = ""
 
     @staticmethod
     def from_dict(obj: Any) -> 'Sub':
         assert isinstance(obj, dict)
         file = from_str(obj.get("file"))
         label = from_str(obj.get("label"))
-        return Sub(file, label)
+        title = ""
+        return Sub(file, label, title="")
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["file"] = from_str(self.file)
         result["label"] = from_str(self.label)
+        result["title"] = ""
         return result
 
 
